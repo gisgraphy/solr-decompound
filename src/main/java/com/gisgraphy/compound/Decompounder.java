@@ -25,6 +25,7 @@ package com.gisgraphy.compound;
 import static com.gisgraphy.compound.Trie.CONDENSE;
 import static com.gisgraphy.compound.Trie.trie;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,20 @@ public class Decompounder {
 		if (words==null){
 			throw new RuntimeException("words list is mandatory for a decompounder");
 		}
-		String re = trie(words, CONDENSE);
+		List<String> inWords = new ArrayList<String>();
+		List<String> endWords = new ArrayList<String>();
+		for (String word: words){
+			if (word.endsWith(".")){
+				endWords.add(word.replace(".", ""));
+			} else {
+				inWords.add(word);
+			}
+			
+		}
+		String re = trie(inWords, CONDENSE);
+		String re2 = trie(endWords, CONDENSE);
+		re= "((?:("+re2+"\\b))|(?:"+re+"))";
+		//System.out.println(re);
 		p = Pattern
 				.compile(re, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 	}

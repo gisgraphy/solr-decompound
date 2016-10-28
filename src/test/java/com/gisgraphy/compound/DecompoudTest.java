@@ -36,7 +36,9 @@ public class DecompoudTest {
 		{
 		add("weg");
 		add("strasse"); 
-		add("wald");  
+		add("wald");
+		add("str.");
+		add("kg.");
 		}
 	};
 
@@ -44,8 +46,8 @@ public class DecompoudTest {
 	public void testDecompound2(){
 		Decompounder d = new Decompounder(words);
 		
-		String[] stringsToTest = {"foo","fooweg","fOOWeg","wegfoo","wegwaldfoo","wegfoowald"};
-		String[][] results= {{"foo"},{"foo","weg"},{"fOO","Weg"},{"weg","foo"},{"weg","wald","foo"},{"weg","foo","wald"}};
+		String[] stringsToTest = {"foo","fooweg","fOOWeg","wegfoo","wegwaldfoo","wegfoowald","BleibtreuStr","BleibtreuStrnotend","Bleibtreukg","Bleibtreukgnotend"};
+		String[][] results= {{"foo"},{"foo","weg"},{"fOO","Weg"},{"weg","foo"},{"weg","wald","foo"},{"weg","foo","wald"},{"Bleibtreu","Str"},{"BleibtreuStrnotend"},{"Bleibtreu","kg"},{"Bleibtreukgnotend"}};
 		for(int i=0;i<stringsToTest.length;i++){
 			String str = stringsToTest[i];
 			String[] actual = d.decompound(str);
