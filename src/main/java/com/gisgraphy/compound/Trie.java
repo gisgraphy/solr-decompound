@@ -475,6 +475,8 @@ public class Trie {
 		// check for degenerate case
 		if (ar.length == 1)
 			return quotemeta(ar[0], state);
+		if (ar.length == 0)
+			return quotemeta("", state);
 
 		if (state.makeSuffix) {
 			// find common suffix

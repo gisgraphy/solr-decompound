@@ -46,24 +46,41 @@ public class DecompoundTokenFilter extends TokenFilter {
         super(input);
         this.tokens = new LinkedList<DecompoundToken>();
         this.decomp = decomp;
+        try {
+        	
+			//input.incrementToken();
+			//input.incrementToken();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
+    
     @Override
     public final boolean incrementToken() throws IOException {
-        if (!tokens.isEmpty()) {
+        if(!tokens.isEmpty()) {
             assert current != null;
             DecompoundToken token = tokens.removeFirst();
             restoreState(current);
             termAtt.setEmpty().append(token.txt);
             offsetAtt.setOffset(token.startOffset, token.endOffset);
-            posIncAtt.setPositionIncrement(0);
-            return true;
+            posIncAtt.setPositionIncrement(1);   
+           return true;
         }
+        
+        current = captureState();
         if (input.incrementToken()) {
-            decompound();
+        	
+        	//input.reset();
+        	decompound();
+
             if (!tokens.isEmpty()) {
-                current = captureState();
+            current=	captureState();
             }
+            //  input.reset();
+         //   input.incrementToken();
+           
             return true;
         } else {
             return false;
@@ -73,9 +90,12 @@ public class DecompoundTokenFilter extends TokenFilter {
     protected void decompound() {
         int start = offsetAtt.startOffset();
         CharSequence term = new String(termAtt.buffer(), 0, termAtt.length());
-        for (String s : decomp.decompound(term.toString())) {
+        String[] decompound = decomp.decompound(term.toString());
+		for (String s : decompound) {
             int len = s.length();
-            tokens.add(new DecompoundToken(s, start, len));
+           if (decompound.length>1){
+            	tokens.add(new DecompoundToken(s, start, len));
+           }
             start += len;
         }
     }
