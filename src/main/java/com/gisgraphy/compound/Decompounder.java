@@ -46,7 +46,37 @@ public class Decompounder {
 	public enum state {CONCATENATE, SEPARATE, NOT_APPLICABLE};
 	Pattern ENDING_POINT = Pattern.compile("\\.$");
 	
+	public static List<String> DEFAULT_WORD = new ArrayList<String>(){
+		{
+			add("weg.");
+			add("str.");
+			add("straße.");
+			add("strasse.");
+			add("plätze.");
+			add("plätz.");
+			add("platze.");
+			add("platz.");
+			add("wald.");
+		}
+	};
 	
+	private static List<String> DECOMPOUND_COUNTRIES = new ArrayList<String>(){
+		{
+			add("DE");
+			add("CH");
+			add("LI");
+			add("AT");
+		}
+	};
+	
+	/**
+	 * create a basic decompounder with default ending word
+	 */
+	public Decompounder(){
+		this(DEFAULT_WORD);
+	}
+	
+		
 
 	public Decompounder(List<String> words) {
 		if (words==null){
@@ -109,7 +139,7 @@ public class Decompounder {
 		Matcher m = concatenatePattern.matcher(text);
 				StringBuffer s = new StringBuffer();
 				while (m.find()) {
-					if (" ".equals(m.group(2))){
+					if (" ".equals(m.group(2))|| "-".equals(m.group(2))){
 					m.appendReplacement(s,  m.group(3) );
 					} else {
 						m.appendReplacement(s,  m.group(2)+" " +m.group(3) + " ");
@@ -171,6 +201,14 @@ public class Decompounder {
 			}
 		}
 		return state.NOT_APPLICABLE;
+	}
+	
+	public static boolean isDecompoudCountryCode(String countryCode){
+		if (countryCode!=null){
+		return DECOMPOUND_COUNTRIES.contains(countryCode.toUpperCase());
+		} else {
+			return false;
+		}
 	}
 	
 	
