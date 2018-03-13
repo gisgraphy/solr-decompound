@@ -33,7 +33,7 @@ import com.gisgraphy.compound.Decompounder;
  * @see https://github.com/jprante/elasticsearch-analysis-decompound/blob/master/src/main/java/org/xbib/elasticsearch/index/analysis/DecompoundTokenFilterFactory.java
  *
  */
-public class DecompoundTokenFilter extends TokenFilter {
+public class DecompoundTokenFilterV2 extends TokenFilter {
 
     protected final LinkedList<DecompoundToken> tokens;
     protected final Decompounder decomp;
@@ -42,7 +42,7 @@ public class DecompoundTokenFilter extends TokenFilter {
     private final PositionIncrementAttribute posIncAtt = addAttribute(PositionIncrementAttribute.class);
     private AttributeSource.State current;
 
-    protected DecompoundTokenFilter(TokenStream input, Decompounder decomp) {
+    protected DecompoundTokenFilterV2(TokenStream input, Decompounder decomp) {
         super(input);
         this.tokens = new LinkedList<DecompoundToken>();
         this.decomp = decomp;
@@ -50,7 +50,7 @@ public class DecompoundTokenFilter extends TokenFilter {
 
     @Override
     public final boolean incrementToken() throws IOException {
-        if(!tokens.isEmpty()) {
+        if (!tokens.isEmpty()) {
             assert current != null;
             DecompoundToken token = tokens.removeFirst();
             restoreState(current);
@@ -73,12 +73,9 @@ public class DecompoundTokenFilter extends TokenFilter {
     protected void decompound() {
         int start = offsetAtt.startOffset();
         CharSequence term = new String(termAtt.buffer(), 0, termAtt.length());
-        String[] decompound = decomp.decompound(term.toString());
-		for (String s : decompound) {
+        for (String s : decomp.decompound(term.toString())) {
             int len = s.length();
-           if (decompound.length>1){
-            	tokens.add(new DecompoundToken(s, start, len));
-           }
+            tokens.add(new DecompoundToken(s, start, len));
             start += len;
         }
     }
@@ -98,9 +95,9 @@ public class DecompoundTokenFilter extends TokenFilter {
 
         public DecompoundToken(CharSequence txt, int offset, int length) {
             this.txt = txt;
-            int startOff = DecompoundTokenFilter.this.offsetAtt.startOffset();
-            int endOff = DecompoundTokenFilter.this.offsetAtt.endOffset();
-            if (endOff - startOff != DecompoundTokenFilter.this.termAtt.length()) {
+            int startOff = DecompoundTokenFilterV2.this.offsetAtt.startOffset();
+            int endOff = DecompoundTokenFilterV2.this.offsetAtt.endOffset();
+            if (endOff - startOff != DecompoundTokenFilterV2.this.termAtt.length()) {
                 this.startOffset = startOff;
                 this.endOffset = endOff;
             } else {
